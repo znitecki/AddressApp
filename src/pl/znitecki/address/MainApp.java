@@ -22,6 +22,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import pl.znitecki.address.model.Person;
 import pl.znitecki.address.model.PersonListWrapper;
+import pl.znitecki.address.view.BirthdayStatisticsController;
 import pl.znitecki.address.view.PersonEditDialogController;
 import pl.znitecki.address.view.PersonOverviewController;
 import pl.znitecki.address.view.RootLayoutController;
@@ -136,7 +137,7 @@ public class MainApp extends Application {
 	}
 	
 	public File getPersonFilePath() {
-		Preferences prefs = Preferences.systemNodeForPackage(getClass());
+		Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
 		String filePath = prefs.get("filePath", null);
 		if (filePath != null) {
 			return new File(filePath);
@@ -146,7 +147,7 @@ public class MainApp extends Application {
 	}
 	
 	public void setPersonFilePath(File file) {
-		Preferences prefs = Preferences.systemNodeForPackage(getClass());
+		Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
 		if (file != null) {
 			prefs.put("filePath", file.getPath());
 			primaryStage.setTitle(APP_NAME_WITH_FILENAME + file.getName());
@@ -190,6 +191,28 @@ public class MainApp extends Application {
 	        alert.setContentText("Could not save data to file:\n" + file.getPath());
 
 	        alert.showAndWait();
+		}
+	}
+	
+	public void showBirthdayStatistics() {
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(getClass().getResource("view/BirthdayStatistics.fxml"));
+			AnchorPane pane = (AnchorPane) loader.load();
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle("Birthday Statistics");
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.initOwner(primaryStage);
+			Scene scene = new Scene(pane);
+			dialogStage.setScene(scene);
+			
+			BirthdayStatisticsController controller = loader.getController();
+			controller.setPersonData(personData);
+			
+			dialogStage.show();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
